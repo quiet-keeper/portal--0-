@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Портал [0] // Ввод ключа</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #8a8a8a;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            /* Фоновый рисунок —  (пока заглушка) */
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" opacity="0.15"><path fill="none" stroke="%23666" stroke-width="1" d="M0 300 L800 300 M400 0 L400 600 M200 0 L200 600 M600 0 L600 600 M0 150 L800 150 M0 450 L800 450"/><circle cx="400" cy="300" r="80" stroke="%23666" stroke-width="0.5" fill="none"/><text x="380" y="305" fill="%23666" font-size="12" font-family="monospace">?</text></svg>');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            position: relative;
+        }
+
+        /* Эффект зернистости и лёгкого мерцания */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-radial-gradient(circle at 20% 30%, rgba(0,0,0,0.2), rgba(0,0,0,0.2) 2px, transparent 2px, transparent 4px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.1);
+            animation: flicker 4s infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.1; }
+            50% { opacity: 0.05; }
+            100% { opacity: 0.1; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(2px);
+            border: 1px solid #2a2a2a;
+            padding: 30px 25px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            transition: all 0.2s;
+        }
+
+        h1 { 
+            color: #7a7; 
+            border-bottom: 1px solid #333; 
+            padding-bottom: 10px; 
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+
+        .warning {
+            background: rgba(26, 26, 26, 0.8);
+            border-left: 4px solid #a66;
+            padding: 15px;
+            margin: 20px 0;
+            color: #ccc;
+        }
+
+        .key-checker {
+            background: rgba(13, 13, 13, 0.9);
+            border: 1px solid #3a3a3a;
+            padding: 20px;
+            margin: 30px 0;
+            transition: all 0.2s;
+        }
+
+        .key-checker p {
+            margin-top: 0;
+            color: #7a7;
+        }
+
+        .key-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            margin: 15px 0;
+        }
+
+        .key-input input {
+            flex: 2;
+            background: #0a0a0a;
+            border: 1px solid #4a4a4a;
+            color: #8f8;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            padding: 10px 12px;
+            outline: none;
+        }
+
+        .key-input input:focus {
+            border-color: #6f6;
+            box-shadow: 0 0 5px #3a3;
+        }
+
+        .key-input button {
+            background: #1a1a1a;
+            border: 1px solid #4a4a4a;
+            color: #8f8;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .key-input button:hover:not(:disabled) {
+            background: #2a2a2a;
+            border-color: #6f6;
+            color: #bfb;
+        }
+
+        .key-message {
+            margin-top: 10px;
+            padding: 8px;
+            font-size: 0.9em;
+        }
+
+        .key-message.error {
+            color: #c66;
+            border-left: 3px solid #c66;
+            background: rgba(26, 15, 15, 0.9);
+            padding-left: 12px;
+        }
+
+        .key-message.success {
+            color: #6c6;
+            border-left: 3px solid #6c6;
+            background: rgba(15, 26, 15, 0.9);
+            padding-left: 12px;
+        }
+
+        .hidden-step {
+            background: rgba(17, 17, 17, 0.9);
+            border: 1px dashed #444;
+            padding: 15px;
+            margin-top: 25px;
+            color: #6a6;
+            font-size: 0.9em;
+            display: none;
+        }
+
+        hr {
+            border-color: #2a2a2a;
+            margin: 20px 0;
+        }
+
+        .mono {
+            font-family: monospace;
+            background: #1a1a1a;
+            padding: 2px 5px;
+        }
+
+        a {
+            color: #6af;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        
+        .visual-hint {
+            margin-top: 25px;
+            font-size: 11px;
+            text-align: center;
+            opacity: 0.4;
+            transition: opacity 0.2s;
+        }
+
+        .visual-hint:hover {
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>// Портал [0]</h1>
+    <p>Доступ получен. Сканер распознал сигнал.</p>
+
+    <div class="warning">
+        <strong>ПРЕДУПРЕЖДЕНИЕ О ЛОКАЦИИ</strong>
+        <p>Ты вошёл в зону неопределённого назначения. Это не игра на выживание и не эксперимент.</p>
+        <p>Это — <em>личный архив</em>. Коллекция наблюдений, сомнений и паттернов, оставленная одним сознанием в надежде, что кто-то... нет, глупости.</p>
+        <p>Если ты ищешь развлечения, острых ощущений или готовых ответов — <strong>вернись сейчас.</strong> Дальше будет только сложнее.</p>
+    </div>
+
+    <p>Береги себя.</p>
+    <p>Ты погружаешься в бездну мрака.</p>
+
+    <div class="key-checker" id="keyChecker">
+        <p><strong> ВВОД КЛЮЧА ДОСТУПА</strong></p>
+        <p>Введи слово-ключ, которое ты извлёк из исходного сигнала:</p>
+        <div class="key-input">
+            <input type="text" id="keyInput" placeholder="КЛЮЧ..." autocomplete="off">
+            <button id="checkKeyBtn">АКТИВИРОВАТЬ</button>
+        </div>
+        <div id="keyMessage" class="key-message"></div>
+    </div>
+
+    <div class="hidden-step" id="nextStep">
+        <p><strong>СЛЕДУЮЩАЯ КООРДИНАТА:</strong> <span id="nextLink">(здесь будет следующая ссылка)</span></p>
+        <p>Доступ подтверждён.</p>
+        <p><em>Возможно, ты не вернёшься прежним...</em></p>
+    </div>
+
+    <hr>
+    <p><small>Интерфейс Портал [0] // Статус: <span class="mono">активен</span> // Сессия: <span class="mono">одноразовая</span></small></p>
+
+    <div class="visual-hint">
+        ⚡ сигнал приходит через тишину
+    </div>
+</div>
+
+<script>
+    
+    const correctKey = "PARADOX";
+
+    // Ссылка на следующий этап (пока заглушка)
+    const nextStageUrl = "https://quiet-keeper.github.io/";
+
+    const keyInput = document.getElementById("keyInput");
+    const checkBtn = document.getElementById("checkKeyBtn");
+    const keyMessage = document.getElementById("keyMessage");
+    const nextStep = document.getElementById("nextStep");
+    const keyChecker = document.getElementById("keyChecker");
+    const nextLinkSpan = document.getElementById("nextLink");
+
+    function checkKey() {
+        const userInput = keyInput.value.trim();
+        if (userInput === "") {
+            keyMessage.textContent = "Введи ключ. Пустота не подходит.";
+            keyMessage.className = "key-message error";
+            return;
+        }
+
+        if (userInput.toLowerCase() === correctKey.toLowerCase()) {
+            keyMessage.textContent = "✓ ДОСТУП ПОДТВЕРЖДЁН. Координата разблокирована.";
+            keyMessage.className = "key-message success";
+
+            
+            nextLinkSpan.innerHTML = `<a href="${nextStageUrl}" target="_blank">${nextStageUrl}</a>`;
+            nextStep.style.display = "block";
+
+            
+            keyInput.disabled = true;
+            checkBtn.disabled = true;
+
+            
+            keyChecker.style.borderColor = "#6c6";
+            keyChecker.style.backgroundColor = "rgba(15, 26, 15, 0.9)";
+        } else {
+            keyMessage.textContent = "✗ КЛЮЧ НЕ РАСПОЗНАН. Вернись к исходному артефакту и проверь внимательнее.";
+            keyMessage.className = "key-message error";
+
+            keyInput.value = "";
+            keyInput.focus();
+        }
+    }
+
+    // События
+    checkBtn.addEventListener("click", checkKey);
+    keyInput.addEventListener("keypress", function(e) {
+        if (e.key === "Enter") {
+            checkKey();
+        }
+    });
+
+    
+    setTimeout(() => {
+        keyInput.focus();
+    }, 300);
+</script>
+</body>
+</html>
