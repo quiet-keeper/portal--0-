@@ -20,7 +20,7 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
-            /* Фоновый рисунок —  (пока заглушка) */
+            
             background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" opacity="0.15"><path fill="none" stroke="%23666" stroke-width="1" d="M0 300 L800 300 M400 0 L400 600 M200 0 L200 600 M600 0 L600 600 M0 150 L800 150 M0 450 L800 450"/><circle cx="400" cy="300" r="80" stroke="%23666" stroke-width="0.5" fill="none"/><text x="380" y="305" fill="%23666" font-size="12" font-family="monospace">?</text></svg>');
             background-repeat: no-repeat;
             background-position: center;
@@ -28,7 +28,7 @@
             position: relative;
         }
 
-        /* Эффект зернистости и лёгкого мерцания */
+        
         body::before {
             content: "";
             position: fixed;
@@ -250,8 +250,8 @@
     
     const correctKey = "PARADOX";
 
-    // Ссылка на следующий этап (пока заглушка)
-    const nextStageUrl = "https://quiet-keeper.github.io/";
+    //Глупо ли оставлять всё просто так в коде который может увидеть каждый? Да, но тут особый случай
+    const nextStageUrl = "https://quiet-keeper.github.io/story/alone.html";
 
     const keyInput = document.getElementById("keyInput");
     const checkBtn = document.getElementById("checkKeyBtn");
@@ -292,7 +292,7 @@
         }
     }
 
-    // События
+    
     checkBtn.addEventListener("click", checkKey);
     keyInput.addEventListener("keypress", function(e) {
         if (e.key === "Enter") {
